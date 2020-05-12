@@ -5,5 +5,5 @@ using UnityEngine;
 
 abstract public class Monsters : MonoBehaviour
 {
-    public enum MonsterTypes { Fire, Ground, Water, Posion, NoType };
+    public enum MonsterTypes { Fire, Ground, Water, Dark, NoType };
 }
