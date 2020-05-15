@@ -40,74 +40,68 @@ public class Ready_to_fight : Monsters
             {
                 invoke_button.gameObject.SetActive(true);
                 select_card.gameObject.SetActive(false);
-                invoked = true;
             }
 
         }
-        if (monster_player1 == null)
-        {         
-            //search target
-            for(int i = 0; i < player1.transform.childCount; ++i)
-            {
-                GameObject current_object = player1.transform.GetChild(i).gameObject;
-               
-                //check if target is in camera
-                if (current_object.GetComponent<TrackableBehaviour>().CurrentStatus == TrackableBehaviour.Status.DETECTED ||
-                    current_object.GetComponent<TrackableBehaviour>().CurrentStatus == TrackableBehaviour.Status.TRACKED ||
-                   current_object.GetComponent<TrackableBehaviour>().CurrentStatus == TrackableBehaviour.Status.EXTENDED_TRACKED)
-                {
-                    monster_player1 = current_object;
-                    Debug.Log("Player1");
-                    break;
-                }
-            }
-        }
-        else
+        if (!invoked)
         {
-            if(!invoked)
+            //search in monsters to player1
+            if (monster_player1 == null)
             {
-                if (monster_player1.GetComponent<TrackableBehaviour>().CurrentStatus != TrackableBehaviour.Status.DETECTED &&
-                   monster_player1.GetComponent<TrackableBehaviour>().CurrentStatus != TrackableBehaviour.Status.TRACKED &&
-                  monster_player1.GetComponent<TrackableBehaviour>().CurrentStatus != TrackableBehaviour.Status.EXTENDED_TRACKED)
-                {
-                    monster_player1 = null;
-                }
+                monster_player1 = SearchTarget(player1);
+            }
+            else
+            {
+                //checck if target follow into camera
+                monster_player1 = CheckTargetInCamera(monster_player1);
+            }
+            //serch in mosters to player2
+            if (monster_player2 == null)
+            {
+                monster_player2 = SearchTarget(player2);
+            }
+            else
+            {
+                monster_player2 = CheckTargetInCamera(monster_player2);
             }
         }
-        if (monster_player2 == null)
+    }
+
+    public GameObject SearchTarget(GameObject player)
+    {
+        //search target
+        for (int i = 0; i < player.transform.childCount; ++i)
         {
-            for (int i = 0; i < player2.transform.childCount; ++i)
+            GameObject current_object = player.transform.GetChild(i).gameObject;
+
+            //check if target is in camera
+            if (current_object.GetComponent<TrackableBehaviour>().CurrentStatus == TrackableBehaviour.Status.DETECTED ||
+                current_object.GetComponent<TrackableBehaviour>().CurrentStatus == TrackableBehaviour.Status.TRACKED ||
+               current_object.GetComponent<TrackableBehaviour>().CurrentStatus == TrackableBehaviour.Status.EXTENDED_TRACKED)
             {
-                GameObject current_object = player2.transform.GetChild(i).gameObject;
-                //check if target is in camera
-                if (current_object.GetComponent<TrackableBehaviour>().CurrentStatus == TrackableBehaviour.Status.DETECTED ||
-                    current_object.GetComponent<TrackableBehaviour>().CurrentStatus == TrackableBehaviour.Status.TRACKED ||
-                   current_object.GetComponent<TrackableBehaviour>().CurrentStatus == TrackableBehaviour.Status.EXTENDED_TRACKED)
-                {
-                    monster_player2 = current_object;
-                    Debug.Log("Player2");
-                    break;
-                }
+                return current_object;
             }
         }
-        else
+        return null;
+    }
+
+    public GameObject CheckTargetInCamera(GameObject target)
+    {
+        if (target.GetComponent<TrackableBehaviour>().CurrentStatus == TrackableBehaviour.Status.DETECTED ||
+                target.GetComponent<TrackableBehaviour>().CurrentStatus == TrackableBehaviour.Status.TRACKED ||
+               target.GetComponent<TrackableBehaviour>().CurrentStatus == TrackableBehaviour.Status.EXTENDED_TRACKED)
         {
-            if (!invoked)
-            {
-                if (monster_player2.GetComponent<TrackableBehaviour>().CurrentStatus != TrackableBehaviour.Status.DETECTED &&
-                   monster_player2.GetComponent<TrackableBehaviour>().CurrentStatus != TrackableBehaviour.Status.TRACKED &&
-                  monster_player2.GetComponent<TrackableBehaviour>().CurrentStatus != TrackableBehaviour.Status.EXTENDED_TRACKED)
-                {
-                    monster_player2 = null;
-                }
-            }
+            return target;
         }
+        return null;
     }
 
     public void InvokeDragon()
     {
         monster_player1.GetComponent<Invoke_dragon>().InitRing();
         monster_player2.GetComponent<Invoke_dragon>().InitRing();
+        invoked = true;
+
     }
 
     public void Fight()
