@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PointCounter : MonoBehaviour
 {
@@ -42,8 +43,9 @@ public class PointCounter : MonoBehaviour
     {
         if (wins == 2)
         {
-            Debug.Log("win");
             ShowWinText();
+            wins = 0;
+            StartCoroutine(LoadMainMenu());
         }
 
         //win condition
@@ -94,4 +96,15 @@ public class PointCounter : MonoBehaviour
     {
         player_wins_text.enabled = true;
     }
+
+    IEnumerator LoadMainMenu()
+    {
+        //yield on a new YieldInstruction that waits for 5 seconds.
+        yield return new WaitForSeconds(2);
+
+        //After we have waited 5 seconds print the time again.
+        SceneManager.LoadScene("MainMenuScene");
+    }
 }
+
+

@@ -6,65 +6,133 @@ using UnityEngine.UI;
 
 public class Ready_to_fight : Monsters
 {
+
+    enum RoundState { P1Selecting, P2Selecting, PreSummoned, Summoned};
+
+    public GameObject monsters;
     public GameObject player1;
     public GameObject player2;
+
+    public Button selectP1;
+    public Button selectP2;
     public Button invoke_button;
     public Button fight_button;
-    public Text select_card;
+    public Text select_cardP1;
+    public Text select_cardP2;
+    public Text prepare_fight;
 
-    // Start is called before the first frame update
 
     GameObject monster_player1 = null;
     GameObject monster_player2 = null;
 
-    bool invoked = false;
+    RoundState state = RoundState.P1Selecting;
+
 
     void Start()
     {
-
+        TurnPlayer1();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (monster_player1 == null || monster_player2 == null)
+        switch(state)
         {
-            invoke_button.gameObject.SetActive(false);
-            select_card.gameObject.SetActive(true);
-            fight_button.gameObject.SetActive(false);
+            case RoundState.P1Selecting:
+                monster_player1 = SearchTarget(monsters);
+                if (monster_player1 != null)
+                {
+                    monster_player1 = CheckTargetInCamera(monster_player1);
+                    if (!selectP1.IsActive())
+                    {
+                        selectP1.gameObject.SetActive(true);
+                        select_cardP1.gameObject.SetActive(false);
+                    }
+                }
+                if(monster_player1 == null && selectP1.IsActive())
+                {
+                    selectP1.gameObject.SetActive(false);
+                    select_cardP1.gameObject.SetActive(true);
 
-        }
-        else
-        {
-            if (!invoked)
-            {
-                invoke_button.gameObject.SetActive(true);
-                select_card.gameObject.SetActive(false);
-            }
+                }
+                break;
 
+            case RoundState.P2Selecting:
+                monster_player2 = SearchTarget(monsters);
+                if (monster_player2 != null)
+                {
+                    monster_player2 = CheckTargetInCamera(monster_player2);
+                    if (!selectP1.IsActive())
+                    {
+                        selectP2.gameObject.SetActive(true);
+                        select_cardP2.gameObject.SetActive(false);
+
+                    }
+                }
+                if (monster_player2 == null && selectP2.IsActive())
+                {
+                    selectP2.gameObject.SetActive(false);
+                    select_cardP2.gameObject.SetActive(true);
+                }
+                break;
+
+            case RoundState.PreSummoned:
+
+                if(CheckTargetInCamera(monster_player1) != null && CheckTargetInCamera(monster_player2) != null && !invoke_button.IsActive())
+                {
+                    invoke_button.gameObject.SetActive(true);
+                    prepare_fight.gameObject.SetActive(false);
+                }
+                else if((CheckTargetInCamera(monster_player1) == null || CheckTargetInCamera(monster_player2) == null) && invoke_button.IsActive())
+                {
+                    invoke_button.gameObject.SetActive(false);
+                    prepare_fight.gameObject.SetActive(true);
+                }
+
+                break;
+            case RoundState.Summoned:
+                break;
         }
-        if (!invoked)
-        {
-            //search in monsters to player1
-            if (monster_player1 == null)
-            {
-                monster_player1 = SearchTarget(player1);
-            }
-            else
-            {
-                //checck if target follow into camera
-                monster_player1 = CheckTargetInCamera(monster_player1);
-            }
-            //serch in mosters to player2
-            if (monster_player2 == null)
-            {
-                monster_player2 = SearchTarget(player2);
-            }
-            else
-            {
-                monster_player2 = CheckTargetInCamera(monster_player2);
-            }
-        }
+
+    }
+    //manage in buttons
+    public void TurnPlayer1()
+    {
+        invoke_button.gameObject.SetActive(false);
+        select_cardP1.gameObject.SetActive(true);
+        fight_button.gameObject.SetActive(false);
+        select_cardP2.gameObject.SetActive(false);
+        prepare_fight.gameObject.SetActive(false);
+        selectP1.gameObject.SetActive(false);
+        selectP2.gameObject.SetActive(false);
+
+        state = RoundState.P1Selecting;
+    }
+
+    public void TurnPlayer2()
+    {
+        invoke_button.gameObject.SetActive(false);
+        select_cardP1.gameObject.SetActive(false);
+        fight_button.gameObject.SetActive(false);
+        select_cardP2.gameObject.SetActive(true);
+        prepare_fight.gameObject.SetActive(false);
+        selectP1.gameObject.SetActive(false);
+        selectP2.gameObject.SetActive(false);
+
+        state = RoundState.P2Selecting;
+    }
+
+    public void PreSummoned()
+    {
+        invoke_button.gameObject.SetActive(false);
+        select_cardP1.gameObject.SetActive(false);
+        fight_button.gameObject.SetActive(false);
+        select_cardP2.gameObject.SetActive(false);
+        prepare_fight.gameObject.SetActive(true);
+        selectP1.gameObject.SetActive(false);
+        selectP2.gameObject.SetActive(false);
+
+        state = RoundState.PreSummoned;
     }
 
     public GameObject SearchTarget(GameObject player)
@@ -75,9 +143,7 @@ public class Ready_to_fight : Monsters
             GameObject current_object = player.transform.GetChild(i).gameObject;
 
             //check if target is in camera
-            if (current_object.GetComponent<TrackableBehaviour>().CurrentStatus == TrackableBehaviour.Status.DETECTED ||
-                current_object.GetComponent<TrackableBehaviour>().CurrentStatus == TrackableBehaviour.Status.TRACKED ||
-               current_object.GetComponent<TrackableBehaviour>().CurrentStatus == TrackableBehaviour.Status.EXTENDED_TRACKED)
+            if (current_object.GetComponent<TrackableBehaviour>().CurrentStatus == TrackableBehaviour.Status.TRACKED)
             {
                 return current_object;
             }
@@ -87,9 +153,7 @@ public class Ready_to_fight : Monsters
 
     public GameObject CheckTargetInCamera(GameObject target)
     {
-        if (target.GetComponent<TrackableBehaviour>().CurrentStatus == TrackableBehaviour.Status.DETECTED ||
-                target.GetComponent<TrackableBehaviour>().CurrentStatus == TrackableBehaviour.Status.TRACKED ||
-               target.GetComponent<TrackableBehaviour>().CurrentStatus == TrackableBehaviour.Status.EXTENDED_TRACKED)
+        if (target.GetComponent<TrackableBehaviour>().CurrentStatus == TrackableBehaviour.Status.TRACKED)
         {
             return target;
         }
@@ -100,7 +164,7 @@ public class Ready_to_fight : Monsters
     {
         monster_player1.GetComponent<Invoke_dragon>().InitRing();
         monster_player2.GetComponent<Invoke_dragon>().InitRing();
-        invoked = true;
+        state = RoundState.Summoned;
 
     }
 
@@ -159,9 +223,9 @@ public class Ready_to_fight : Monsters
                 break;
         }
         if(winner == monster_player1)
-            monster_player1.GetComponentInParent<PointCounter>().WinRound();
+            player1.GetComponent<PointCounter>().WinRound();
         else if (winner == monster_player2)
-            monster_player2.GetComponentInParent<PointCounter>().WinRound();
+            player2.GetComponent<PointCounter>().WinRound();
 
         NewRound();
         
@@ -173,9 +237,7 @@ public class Ready_to_fight : Monsters
         monster_player2.GetComponent<Invoke_dragon>().PassRound();
         monster_player1 = null;
         monster_player2 = null;
-        invoked = false;
-        invoke_button.gameObject.SetActive(false);
-        select_card.gameObject.SetActive(false);
-        fight_button.gameObject.SetActive(false);
+
+        TurnPlayer1();
     }
 }
