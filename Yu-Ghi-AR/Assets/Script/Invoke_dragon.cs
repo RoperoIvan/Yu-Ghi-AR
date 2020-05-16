@@ -28,12 +28,12 @@ public class Invoke_dragon : Monsters
         if (Time.time - timer >= appear_dragon)
         {
             dragon.SetActive(true);
-            fight_button.gameObject.SetActive(true);
         }
         if (Time.time - timer >= magic_cicle_time)
         {
             ring.gameObject.SetActive(false);
             hide_dragon.gameObject.SetActive(false);
+            fight_button.gameObject.SetActive(true);
         }
     }
 

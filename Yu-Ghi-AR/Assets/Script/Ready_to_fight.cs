@@ -20,14 +20,28 @@ public class Ready_to_fight : Monsters
     public Text select_cardP1;
     public Text select_cardP2;
     public Text prepare_fight;
-
+    public AudioClip win_round_clip;
+    public AudioClip water_summon_clip;
+    public AudioClip fire_summon_clip;
+    public AudioClip earth_summon_clip;
+    public AudioClip dark_summon_clip;
+    public AudioClip UI_audio_clip;
+    public AudioClip UI_fight_audio_clip;
+    AudioSource audio_source;
+    AudioSource audio_source_p1;
+    AudioSource audio_source_p2;
 
     GameObject monster_player1 = null;
     GameObject monster_player2 = null;
 
     RoundState state = RoundState.P1Selecting;
 
-
+    private void Awake()
+    {
+        audio_source = GetComponent<AudioSource>();
+        audio_source_p1 = player1.GetComponent<AudioSource>();
+        audio_source_p2 = player2.GetComponent<AudioSource>();
+    }
     void Start()
     {
         TurnPlayer1();
@@ -47,6 +61,7 @@ public class Ready_to_fight : Monsters
                     {
                         selectP1.gameObject.SetActive(true);
                         select_cardP1.gameObject.SetActive(false);
+                        ChooseInvokeSound(audio_source_p1, monster_player1);
                     }
                 }
                 if(monster_player1 == null && selectP1.IsActive())
@@ -66,6 +81,7 @@ public class Ready_to_fight : Monsters
                     {
                         selectP2.gameObject.SetActive(true);
                         select_cardP2.gameObject.SetActive(false);
+                        ChooseInvokeSound(audio_source_p2, monster_player2);
 
                     }
                 }
@@ -98,6 +114,8 @@ public class Ready_to_fight : Monsters
     //manage in buttons
     public void TurnPlayer1()
     {
+        //audio_source.clip = UI_audio_clip;
+        //audio_source.Play();
         invoke_button.gameObject.SetActive(false);
         select_cardP1.gameObject.SetActive(true);
         fight_button.gameObject.SetActive(false);
@@ -111,6 +129,8 @@ public class Ready_to_fight : Monsters
 
     public void TurnPlayer2()
     {
+        audio_source.clip = UI_audio_clip;
+        audio_source.Play();
         invoke_button.gameObject.SetActive(false);
         select_cardP1.gameObject.SetActive(false);
         fight_button.gameObject.SetActive(false);
@@ -124,6 +144,8 @@ public class Ready_to_fight : Monsters
 
     public void PreSummoned()
     {
+        audio_source.clip = UI_audio_clip;
+        audio_source.Play();
         invoke_button.gameObject.SetActive(false);
         select_cardP1.gameObject.SetActive(false);
         fight_button.gameObject.SetActive(false);
@@ -162,15 +184,21 @@ public class Ready_to_fight : Monsters
 
     public void InvokeDragon()
     {
+        audio_source.clip = UI_fight_audio_clip;
+        audio_source.Play();
         monster_player1.GetComponent<Invoke_dragon>().InitRing();
         monster_player2.GetComponent<Invoke_dragon>().InitRing();
         state = RoundState.Summoned;
+        ChooseInvokeSound(audio_source_p1, monster_player1);
+        ChooseInvokeSound(audio_source_p2, monster_player2);
 
     }
 
     public void Fight()
     {
         //take monsters types
+        //audio_source.clip = UI_audio_clip;
+        //audio_source.Play();
         MonsterTypes type_monster1 = monster_player1.GetComponent<Invoke_dragon>().type;
         MonsterTypes type_monster2 = monster_player2.GetComponent<Invoke_dragon>().type;
         GameObject winner = null;
@@ -233,11 +261,112 @@ public class Ready_to_fight : Monsters
 
     void NewRound()
     {
+        audio_source.clip = win_round_clip;
+        audio_source.Play();
         monster_player1.GetComponent<Invoke_dragon>().PassRound();
         monster_player2.GetComponent<Invoke_dragon>().PassRound();
         monster_player1 = null;
         monster_player2 = null;
 
         TurnPlayer1();
+    }
+    void ChooseInvokeSound(AudioSource audio_src, GameObject monster)
+    {
+        MonsterTypes type_monster = monster.GetComponent<Invoke_dragon>().type;
+        switch (state)
+        {
+            case RoundState.P1Selecting:
+                switch (type_monster)
+                {
+                    case MonsterTypes.Fire:
+                        //SOUND
+
+                        break;
+                    case MonsterTypes.Water:
+                        //SOUND
+
+                        break;
+                    case MonsterTypes.Ground:
+                        //SOUND
+
+                        break;
+                    case MonsterTypes.Dark:
+                        //SOUND
+
+                        break;
+                }
+                break;
+
+            case RoundState.P2Selecting:
+                switch (type_monster)
+                {
+                    case MonsterTypes.Fire:
+                        //SOUND
+
+                        break;
+                    case MonsterTypes.Water:
+                        //SOUND
+
+                        break;
+                    case MonsterTypes.Ground:
+                        //SOUND
+
+                        break;
+                    case MonsterTypes.Dark:
+                        //SOUND
+
+                        break;
+                }
+                break;
+
+            case RoundState.PreSummoned:
+                switch (type_monster)
+                {
+                    case MonsterTypes.Fire:
+                        //SOUND
+
+                        break;
+                    case MonsterTypes.Water:
+                        //SOUND
+
+                        break;
+                    case MonsterTypes.Ground:
+                        //SOUND
+
+                        break;
+                    case MonsterTypes.Dark:
+                        //SOUND
+
+                        break;
+                }
+
+                break;
+            case RoundState.Summoned:
+                switch (type_monster)
+                {
+                    case MonsterTypes.Fire:
+                        //SOUND
+                        audio_src.clip = fire_summon_clip;
+                        audio_src.Play();
+                        break;
+                    case MonsterTypes.Water:
+                        //SOUND
+                        audio_src.clip = water_summon_clip;
+                        audio_src.Play();
+                        break;
+                    case MonsterTypes.Ground:
+                        //SOUND
+                        audio_src.clip = earth_summon_clip;
+                        audio_src.Play();
+                        break;
+                    case MonsterTypes.Dark:
+                        //SOUND
+                        audio_src.clip = dark_summon_clip;
+                        audio_src.Play();
+                        break;
+                }
+                break;
+        }
+       
     }
 }
