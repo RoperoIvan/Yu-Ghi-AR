@@ -8,6 +8,8 @@ public class Ready_to_fight : Monsters
 {
 
     enum RoundState { P1Selecting, P2Selecting, PreSummoned, Summoned};
+    enum AttackState { Fighting, CalculateWinner, Selecting};
+
 
     public GameObject monsters;
     public GameObject player1;
@@ -35,6 +37,7 @@ public class Ready_to_fight : Monsters
     GameObject monster_player2 = null;
 
     RoundState state = RoundState.P1Selecting;
+    AttackState attack_state = AttackState.Selecting;
 
     private void Awake()
     {
@@ -107,6 +110,20 @@ public class Ready_to_fight : Monsters
 
                 break;
             case RoundState.Summoned:
+                switch(attack_state)
+                {
+                    case AttackState.Selecting:
+                        break;
+                    case AttackState.Fighting:
+                        if (monster_player1.GetComponent<Invoke_dragon>().isAnimFinished("FireBall Shoot") || monster_player2.GetComponent<Invoke_dragon>().isAnimFinished("FireBall Shoot"))
+                            Fight();
+                        break;
+                    case AttackState.CalculateWinner:
+                        if (monster_player1.GetComponent<Invoke_dragon>().isAnimFinished("Die") || monster_player2.GetComponent<Invoke_dragon>().isAnimFinished("Die"))
+                            NewRound();
+                        break;
+                }
+
                 break;
         }
 
@@ -250,12 +267,24 @@ public class Ready_to_fight : Monsters
                 }
                 break;
         }
-        if(winner == monster_player1)
+        if (winner == monster_player1)
+        {
             player1.GetComponent<PointCounter>().WinRound();
+            monster_player1.GetComponent<Invoke_dragon>().SetMonsterWin(true);
+            monster_player2.GetComponent<Invoke_dragon>().SetMonsterWin(false);
+        }
         else if (winner == monster_player2)
+        {
             player2.GetComponent<PointCounter>().WinRound();
-
-        NewRound();
+            monster_player1.GetComponent<Invoke_dragon>().SetMonsterWin(false);
+            monster_player2.GetComponent<Invoke_dragon>().SetMonsterWin(true);
+        }
+        else
+        {
+            monster_player1.GetComponent<Invoke_dragon>().SetMonsterWin(false);
+            monster_player2.GetComponent<Invoke_dragon>().SetMonsterWin(false);
+        }
+        attack_state = AttackState.CalculateWinner;
         
     }
 
@@ -267,7 +296,7 @@ public class Ready_to_fight : Monsters
         monster_player2.GetComponent<Invoke_dragon>().PassRound();
         monster_player1 = null;
         monster_player2 = null;
-
+        attack_state = AttackState.Selecting;
         TurnPlayer1();
     }
     void ChooseInvokeSound(AudioSource audio_src, GameObject monster)
@@ -368,5 +397,12 @@ public class Ready_to_fight : Monsters
                 break;
         }
        
+    }
+
+    public void ManageAttacks()
+    {
+        monster_player1.GetComponent<Invoke_dragon>().Attack();
+        monster_player2.GetComponent<Invoke_dragon>().Attack();
+        attack_state = AttackState.Fighting;
     }
 }

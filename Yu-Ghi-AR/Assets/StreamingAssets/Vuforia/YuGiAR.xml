@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
+  <Tracking>
+    <ImageTarget name="GroundDragon" size="1.000000 0.848700" />
+    <ImageTarget name="WaterDragon" size="1.000000 1.462857" />
+    <ImageTarget name="FireDragon" size="1.000000 1.166434" />
+    <ImageTarget name="DarkDragon" size="1.000000 0.967742" />
+  </Tracking>
+</QCARConfig>

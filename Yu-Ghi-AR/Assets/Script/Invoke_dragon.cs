@@ -13,7 +13,6 @@ public class Invoke_dragon : Monsters
 
     public MonsterTypes type = MonsterTypes.NoType;
 
-
     void Start()
     {
     }
@@ -50,5 +49,25 @@ public class Invoke_dragon : Monsters
         dragon.SetActive(false);
         this.gameObject.GetComponent<Invoke_dragon>().enabled = false;
 
+    }
+
+    public void Attack()
+    {
+        dragon.GetComponent<Animator>().SetBool("isShooting", true);
+    }
+
+    public void SetMonsterWin(bool win)
+    {
+        dragon.GetComponent<Animator>().SetBool("Win", win);
+       
+    }
+
+    public bool isAnimFinished(string animName)
+    {
+        if (dragon.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName(animName) && dragon.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length >
+            dragon.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime)
+            return false;
+
+        return true;
     }
 }
