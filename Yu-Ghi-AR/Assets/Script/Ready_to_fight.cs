@@ -41,6 +41,10 @@ public class Ready_to_fight : Monsters
 
     private void Awake()
     {
+        Screen.autorotateToLandscapeLeft = true;
+        Screen.autorotateToLandscapeRight = true;
+        Screen.autorotateToPortrait = false;
+        Screen.autorotateToPortraitUpsideDown = false;
         audio_source = GetComponent<AudioSource>();
         audio_source_p1 = player1.GetComponent<AudioSource>();
         audio_source_p2 = player2.GetComponent<AudioSource>();
