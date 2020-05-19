@@ -432,7 +432,7 @@ public class Ready_to_fight : Monsters
     {
         state = RoundState.Summoned;
 
-        int num = UnityEngine.Random.RandomRange(0, 2);
+        int num = UnityEngine.Random.Range(0, 2);
 
         if (num == 0)
         {
