@@ -12,6 +12,7 @@ public class Invoke_dragon : Monsters
     float actual_time;
 
     public MonsterTypes type = MonsterTypes.NoType;
+
     void Start()
     {
     }

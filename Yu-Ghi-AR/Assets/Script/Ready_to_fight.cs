@@ -38,7 +38,7 @@ public class Ready_to_fight : Monsters
     AudioSource audio_source_p2;
     GameObject monster_player1 = null;
     GameObject monster_player2 = null;
-
+    GameObject winner = null;
     RoundState state = RoundState.P1Selecting;
     MiniGames mini_games = MiniGames.ChargeAttack;
     private void Awake()
@@ -49,6 +49,10 @@ public class Ready_to_fight : Monsters
     }
     void Start()
     {
+        minipress_button_p1.gameObject.SetActive(false);
+        minipress_button_p2.gameObject.SetActive(false);
+        minibar_p1.gameObject.SetActive(false);
+        minibar_p2.gameObject.SetActive(false);
         TurnPlayer1();
     }
 
@@ -129,32 +133,40 @@ public class Ready_to_fight : Monsters
             case MiniGames.ChargeAttack:
                 if(minipress_button_p1.gameObject.GetComponent<PressMiniGame>().GetValue() >= 100)
                 {
-                    ManageWinner(player1);
+                    monster_player1.GetComponent<Invoke_dragon>().Attack();
+                    monster_player2.GetComponent<Invoke_dragon>().SetMonsterWin(false);
+                    winner = player1;
+                    minipress_button_p1.GetComponent<PressMiniGame>().ResetBar();
+                    minipress_button_p2.GetComponent<PressMiniGame>().ResetBar();
+                    minipress_button_p1.gameObject.SetActive(false);
+                    minipress_button_p2.gameObject.SetActive(false);
+                    minibar_p1.gameObject.SetActive(false);
+                    minibar_p2.gameObject.SetActive(false);
+                    player1.GetComponent<PointCounter>().WinRound();
+                    audio_source.clip = win_round_clip;
+                    audio_source.Play();
+                    Invoke("NewRound", 3f);
                 }
                 if (minipress_button_p2.gameObject.GetComponent<PressMiniGame>().GetValue() >= 100)
                 {
-                    ManageWinner(player2);
+                    monster_player2.GetComponent<Invoke_dragon>().Attack();
+                    monster_player1.GetComponent<Invoke_dragon>().SetMonsterWin(false);
+                    winner = player2;
+                    minipress_button_p1.GetComponent<PressMiniGame>().ResetBar();
+                    minipress_button_p2.GetComponent<PressMiniGame>().ResetBar();
+                    minipress_button_p1.gameObject.SetActive(false);
+                    minipress_button_p2.gameObject.SetActive(false);
+                    minibar_p1.gameObject.SetActive(false);
+                    minibar_p2.gameObject.SetActive(false);
+                    player2.GetComponent<PointCounter>().WinRound();
+                    audio_source.clip = win_round_clip;
+                    audio_source.Play();
+                    Invoke("NewRound", 3f);
                 }
                 break;
             case MiniGames.FastAttack:
                 break;
         }
-    }
-
-    private void ManageWinner(GameObject winner)
-    {
-        if(winner == player1)
-        {
-            player1.GetComponent<PointCounter>().WinRound();
-        }
-        else if (winner == player2)
-        {
-            player2.GetComponent<PointCounter>().WinRound();
-        }
-        else //Empate
-        {
-        }
-        NewRound();
     }
 
     //manage in buttons
@@ -169,13 +181,7 @@ public class Ready_to_fight : Monsters
         prepare_fight.gameObject.SetActive(false);
         selectP1.gameObject.SetActive(false);
         selectP2.gameObject.SetActive(false);
-        minipress_button_p1.gameObject.SetActive(false);
-        minipress_button_p2.gameObject.SetActive(false);
-        minibar_p1.gameObject.SetActive(false);
-        minibar_p2.gameObject.SetActive(false);
         state = RoundState.P1Selecting;
-        minipress_button_p1.GetComponent<PressMiniGame>().ResetBar();
-        minipress_button_p2.GetComponent<PressMiniGame>().ResetBar();
     }
 
     public void TurnPlayer2()
@@ -261,8 +267,7 @@ public class Ready_to_fight : Monsters
 
     void NewRound()
     {
-        audio_source.clip = win_round_clip;
-        audio_source.Play();
+
         monster_player1.GetComponent<Invoke_dragon>().PassRound();
         monster_player2.GetComponent<Invoke_dragon>().PassRound();
         monster_player1 = null;
