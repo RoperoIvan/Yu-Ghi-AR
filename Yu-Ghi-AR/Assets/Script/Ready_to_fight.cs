@@ -39,7 +39,15 @@ public class Ready_to_fight : Monsters
     GameObject monster_player2 = null;
     GameObject winner = null;
     RoundState state = RoundState.P1Selecting;
-    MiniGames mini_games = MiniGames.ChargeAttack;
+    MiniGames mini_games = MiniGames.FastAttack;
+
+    //2nd minigame
+    public Button p1_pink_button;
+    public Button p2_pink_button;
+    public Button p1_blue_button;
+    public Button p2_blue_button;
+    public GameObject icons;
+
     private void Awake()
     {
         audio_source = GetComponent<AudioSource>();
@@ -134,7 +142,6 @@ public class Ready_to_fight : Monsters
                 {
                     monster_player1.GetComponent<Invoke_dragon>().Attack();
                     monster_player2.GetComponent<Invoke_dragon>().SetMonsterWin(false);
-                    winner = player1;
                     minipress_button_p1.GetComponent<PressMiniGame>().ResetBar();
                     minipress_button_p2.GetComponent<PressMiniGame>().ResetBar();
                     minipress_button_p1.gameObject.SetActive(false);
@@ -150,7 +157,6 @@ public class Ready_to_fight : Monsters
                 {
                     monster_player2.GetComponent<Invoke_dragon>().Attack();
                     monster_player1.GetComponent<Invoke_dragon>().SetMonsterWin(false);
-                    winner = player2;
                     minipress_button_p1.GetComponent<PressMiniGame>().ResetBar();
                     minipress_button_p2.GetComponent<PressMiniGame>().ResetBar();
                     minipress_button_p1.gameObject.SetActive(false);
@@ -164,6 +170,47 @@ public class Ready_to_fight : Monsters
                 }
                 break;
             case MiniGames.FastAttack:
+                if (p1_pink_button.gameObject.GetComponent<SpeedMiniGame>().GetValue() >= 100)
+                {
+                    monster_player1.GetComponent<Invoke_dragon>().Attack();
+                    monster_player2.GetComponent<Invoke_dragon>().SetMonsterWin(false);
+                    p1_pink_button.GetComponent<SpeedMiniGame>().ResetBar();
+                    p2_pink_button.GetComponent<SpeedMiniGame>().ResetBar();
+                    p1_blue_button.GetComponent<SpeedMiniGame>().ResetBar();
+                    p2_blue_button.GetComponent<SpeedMiniGame>().ResetBar();
+                    p1_pink_button.gameObject.SetActive(false);
+                    p2_pink_button.gameObject.SetActive(false);
+                    p1_blue_button.gameObject.SetActive(false);
+                    p2_blue_button.gameObject.SetActive(false);
+                    icons.GetComponent<MyColor>().Disactive2Icons();
+                    minibar_p1.gameObject.SetActive(false);
+                    minibar_p2.gameObject.SetActive(false);
+                    player1.GetComponent<PointCounter>().WinRound();
+                    audio_source.clip = win_round_clip;
+                    audio_source.Play();
+                    Invoke("NewRound", 3f);
+
+                }
+                if (p2_pink_button.gameObject.GetComponent<SpeedMiniGame>().GetValue() >= 100)
+                {
+                    monster_player2.GetComponent<Invoke_dragon>().Attack();
+                    monster_player1.GetComponent<Invoke_dragon>().SetMonsterWin(false);
+                    p1_pink_button.GetComponent<SpeedMiniGame>().ResetBar();
+                    p2_pink_button.GetComponent<SpeedMiniGame>().ResetBar();
+                    p1_blue_button.GetComponent<SpeedMiniGame>().ResetBar();
+                    p2_blue_button.GetComponent<SpeedMiniGame>().ResetBar();
+                    p1_pink_button.gameObject.SetActive(false);
+                    p2_pink_button.gameObject.SetActive(false);
+                    p1_blue_button.gameObject.SetActive(false);
+                    p2_blue_button.gameObject.SetActive(false);
+                    icons.GetComponent<MyColor>().Disactive2Icons();
+                    minibar_p1.gameObject.SetActive(false);
+                    minibar_p2.gameObject.SetActive(false);
+                    player2.GetComponent<PointCounter>().WinRound();
+                    audio_source.clip = win_round_clip;
+                    audio_source.Play();
+                    Invoke("NewRound", 3f);
+                }
                 break;
         }
     }
@@ -260,6 +307,10 @@ public class Ready_to_fight : Monsters
                 press2.val = p2_value;
                 break;
             case MiniGames.FastAttack:
+                p1_pink_button.GetComponent<SpeedMiniGame>().val = p1_value * 8f;
+                p2_pink_button.GetComponent<SpeedMiniGame>().val = p2_value * 8f;
+                p1_blue_button.GetComponent<SpeedMiniGame>().val = p1_value * 8f;
+                p2_blue_button.GetComponent<SpeedMiniGame>().val = p2_value * 8f;
                 break;
         }
     }
@@ -392,6 +443,13 @@ public class Ready_to_fight : Monsters
                 minibar_p2.gameObject.SetActive(true);
                 break;
             case MiniGames.FastAttack:
+                p1_pink_button.gameObject.SetActive(true);
+                p2_pink_button.gameObject.SetActive(true);
+                p1_blue_button.gameObject.SetActive(true);
+                p2_blue_button.gameObject.SetActive(true);
+                minibar_p1.gameObject.SetActive(true);
+                minibar_p2.gameObject.SetActive(true);
+                icons.GetComponent<MyColor>().Randomitzate();
                 break;
         }
         MonsterTypes type_monster1 = monster_player1.GetComponent<Invoke_dragon>().type;

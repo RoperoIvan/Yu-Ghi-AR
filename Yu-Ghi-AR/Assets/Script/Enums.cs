@@ -6,4 +6,6 @@ using UnityEngine;
 abstract public class Monsters : MonoBehaviour
 {
     public enum MonsterTypes { Fire, Ground, Water, Dark, NoType };
+
+    public enum ButtomColor { Pink, Blue};
 }
