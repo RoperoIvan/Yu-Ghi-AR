@@ -5,6 +5,7 @@ using Vuforia;
 using UnityEngine.UI;
 using System;
 
+
 public class Ready_to_fight : Monsters
 {
 
@@ -76,7 +77,7 @@ public class Ready_to_fight : Monsters
                     if (!selectP1.IsActive())
                     {
                         selectP1.gameObject.SetActive(true);
-                        select_cardP1.gameObject.SetActive(false);
+                        select_cardP1.gameObject.SetActive(true);
                         ChooseInvokeSound(audio_source_p1, monster_player1);
                     }
                 }
@@ -96,7 +97,7 @@ public class Ready_to_fight : Monsters
                     if (!selectP1.IsActive())
                     {
                         selectP2.gameObject.SetActive(true);
-                        select_cardP2.gameObject.SetActive(false);
+                        select_cardP2.gameObject.SetActive(true);
                         ChooseInvokeSound(audio_source_p2, monster_player2);
 
                     }
@@ -427,6 +428,17 @@ public class Ready_to_fight : Monsters
     public void ManageAttacks()
     {
         state = RoundState.Summoned;
+
+        int num = UnityEngine.Random.RandomRange(0, 2);
+
+        if (num == 0)
+        {
+            mini_games = MiniGames.ChargeAttack;
+        }
+        else if (num == 1)
+        {
+            mini_games = MiniGames.FastAttack;
+        }
         //Random minigame
         ActiveMiniGames();
        
