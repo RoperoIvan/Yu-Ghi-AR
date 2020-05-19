@@ -21,7 +21,7 @@ public class Invoke_dragon : Monsters
     // Update is called once per frame
     void Update()
     {
-        if (Time.time - timer >= appear_dragon *0.5)
+        if (Time.time - timer >= appear_dragon *0.5 && Time.time - timer <= ((appear_dragon * 0.5)+0.2f))
         {
             hide_dragon.gameObject.SetActive(true);
         }
@@ -29,7 +29,7 @@ public class Invoke_dragon : Monsters
         {
             dragon.SetActive(true);
         }
-        if (Time.time - timer >= magic_cicle_time)
+        if (Time.time - timer >= magic_cicle_time && Time.time - timer <= (magic_cicle_time+0.2f))
         {
             ring.gameObject.SetActive(false);
             hide_dragon.gameObject.SetActive(false);
