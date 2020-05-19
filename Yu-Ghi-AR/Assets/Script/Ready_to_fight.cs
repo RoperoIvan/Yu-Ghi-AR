@@ -11,7 +11,6 @@ public class Ready_to_fight : Monsters
     enum RoundState { P1Selecting, P2Selecting, PreSummoned, Summoned, Nothingness};
     public enum MiniGames { ChargeAttack, FastAttack};
 
-    public GameObject monsters;
     public GameObject player1;
     public GameObject player2;
 
@@ -62,7 +61,7 @@ public class Ready_to_fight : Monsters
         switch(state)
         {
             case RoundState.P1Selecting:
-                monster_player1 = SearchTarget(monsters);
+                monster_player1 = SearchTarget(player1);
                 if (monster_player1 != null)
                 {
                     monster_player1 = CheckTargetInCamera(monster_player1);
@@ -82,7 +81,7 @@ public class Ready_to_fight : Monsters
                 break;
 
             case RoundState.P2Selecting:
-                monster_player2 = SearchTarget(monsters);
+                monster_player2 = SearchTarget(player2);
                 if (monster_player2 != null)
                 {
                     monster_player2 = CheckTargetInCamera(monster_player2);
