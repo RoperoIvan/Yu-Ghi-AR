@@ -11,7 +11,7 @@ public class Invoke_dragon : Monsters
     public float magic_cicle_time = 4.0f;
     public float appear_dragon = 2.0f;
     float actual_time;
-
+    public ParticleSystem shooting;
     public MonsterTypes type = MonsterTypes.NoType;
 
     void Start()
@@ -55,6 +55,9 @@ public class Invoke_dragon : Monsters
     public void Attack()
     {
         dragon.GetComponent<Animator>().SetBool("isShooting", true);
+        shooting.gameObject.SetActive(true);
+        shooting.Stop();
+        shooting.Play();
     }
 
     public void SetMonsterWin(bool win)

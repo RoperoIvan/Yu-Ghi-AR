@@ -228,6 +228,9 @@ public class Ready_to_fight : Monsters
         selectP1.gameObject.SetActive(false);
         selectP2.gameObject.SetActive(false);
         state = RoundState.P1Selecting;
+        monster_player2.GetComponent<Invoke_dragon>().shooting.gameObject.SetActive(false);
+        monster_player1.GetComponent<Invoke_dragon>().shooting.gameObject.SetActive(false);
+
     }
 
     public void TurnPlayer2()
@@ -320,9 +323,9 @@ public class Ready_to_fight : Monsters
 
         monster_player1.GetComponent<Invoke_dragon>().PassRound();
         monster_player2.GetComponent<Invoke_dragon>().PassRound();
+        TurnPlayer1();
         monster_player1 = null;
         monster_player2 = null;
-        TurnPlayer1();
     }
     void ChooseInvokeSound(AudioSource audio_src, GameObject monster)
     {
