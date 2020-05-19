@@ -13,8 +13,7 @@ public class PointCounter : MonoBehaviour
     public Image d2_img;
     public Image d3_img;
 
-
-    public Text player_wins_text;
+    public GameObject player_wins_text;
 
     public int wins = 0;
     public int player_wins = 0;
@@ -35,7 +34,7 @@ public class PointCounter : MonoBehaviour
         d3_img.enabled = false;
 
 
-        player_wins_text.enabled = false;
+       player_wins_text.SetActive(false);
     }
 
     // Update is called once per frame
@@ -94,7 +93,7 @@ public class PointCounter : MonoBehaviour
 
     public void ShowWinText()
     {
-        player_wins_text.enabled = true;
+       player_wins_text.SetActive(true);
     }
 
     IEnumerator LoadMainMenu()
