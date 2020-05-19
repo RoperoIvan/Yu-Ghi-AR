@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using Vuforia;
 using UnityEngine.UI;
+using System;
 
 public class Ready_to_fight : Monsters
 {
 
-    enum RoundState { P1Selecting, P2Selecting, PreSummoned, Summoned};
-    enum AttackState { Fighting, CalculateWinner, Selecting};
-
+    enum RoundState { P1Selecting, P2Selecting, PreSummoned, Summoned, Nothingness};
+    public enum MiniGames { ChargeAttack, FastAttack};
 
     public GameObject monsters;
     public GameObject player1;
@@ -19,6 +19,10 @@ public class Ready_to_fight : Monsters
     public Button selectP2;
     public Button invoke_button;
     public Button fight_button;
+    public Button minipress_button_p1;
+    public Button minipress_button_p2;
+    public UnityEngine.UI.Image minibar_p1;
+    public UnityEngine.UI.Image minibar_p2;
     public Text select_cardP1;
     public Text select_cardP2;
     public Text prepare_fight;
@@ -32,19 +36,13 @@ public class Ready_to_fight : Monsters
     AudioSource audio_source;
     AudioSource audio_source_p1;
     AudioSource audio_source_p2;
-
     GameObject monster_player1 = null;
     GameObject monster_player2 = null;
 
     RoundState state = RoundState.P1Selecting;
-    AttackState attack_state = AttackState.Selecting;
-
+    MiniGames mini_games = MiniGames.ChargeAttack;
     private void Awake()
     {
-        Screen.autorotateToLandscapeLeft = true;
-        Screen.autorotateToLandscapeRight = true;
-        Screen.autorotateToPortrait = false;
-        Screen.autorotateToPortraitUpsideDown = false;
         audio_source = GetComponent<AudioSource>();
         audio_source_p1 = player1.GetComponent<AudioSource>();
         audio_source_p2 = player2.GetComponent<AudioSource>();
@@ -113,25 +111,52 @@ public class Ready_to_fight : Monsters
                 }
 
                 break;
+            case RoundState.Nothingness:
+                if (fight_button.enabled)
+                    state = RoundState.Summoned;
+                break;
             case RoundState.Summoned:
-                switch(attack_state)
-                {
-                    case AttackState.Selecting:
-                        break;
-                    case AttackState.Fighting:
-                        if (monster_player1.GetComponent<Invoke_dragon>().isAnimFinished("FireBall Shoot") || monster_player2.GetComponent<Invoke_dragon>().isAnimFinished("FireBall Shoot"))
-                            Fight();
-                        break;
-                    case AttackState.CalculateWinner:
-                        if (monster_player1.GetComponent<Invoke_dragon>().isAnimFinished("Die") || monster_player2.GetComponent<Invoke_dragon>().isAnimFinished("Die"))
-                            NewRound();
-                        break;
-                }
-
+                ManageMiniGames();
                 break;
         }
 
     }
+
+    private void ManageMiniGames()
+    {
+        switch (mini_games)
+        { 
+            case MiniGames.ChargeAttack:
+                if(minipress_button_p1.gameObject.GetComponent<PressMiniGame>().GetValue() >= 100)
+                {
+                    ManageWinner(player1);
+                }
+                if (minipress_button_p2.gameObject.GetComponent<PressMiniGame>().GetValue() >= 100)
+                {
+                    ManageWinner(player2);
+                }
+                break;
+            case MiniGames.FastAttack:
+                break;
+        }
+    }
+
+    private void ManageWinner(GameObject winner)
+    {
+        if(winner == player1)
+        {
+            player1.GetComponent<PointCounter>().WinRound();
+        }
+        else if (winner == player2)
+        {
+            player2.GetComponent<PointCounter>().WinRound();
+        }
+        else //Empate
+        {
+        }
+        NewRound();
+    }
+
     //manage in buttons
     public void TurnPlayer1()
     {
@@ -144,8 +169,13 @@ public class Ready_to_fight : Monsters
         prepare_fight.gameObject.SetActive(false);
         selectP1.gameObject.SetActive(false);
         selectP2.gameObject.SetActive(false);
-
+        minipress_button_p1.gameObject.SetActive(false);
+        minipress_button_p2.gameObject.SetActive(false);
+        minibar_p1.gameObject.SetActive(false);
+        minibar_p2.gameObject.SetActive(false);
         state = RoundState.P1Selecting;
+        minipress_button_p1.GetComponent<PressMiniGame>().ResetBar();
+        minipress_button_p2.GetComponent<PressMiniGame>().ResetBar();
     }
 
     public void TurnPlayer2()
@@ -209,87 +239,24 @@ public class Ready_to_fight : Monsters
         audio_source.Play();
         monster_player1.GetComponent<Invoke_dragon>().InitRing();
         monster_player2.GetComponent<Invoke_dragon>().InitRing();
-        state = RoundState.Summoned;
         ChooseInvokeSound(audio_source_p1, monster_player1);
         ChooseInvokeSound(audio_source_p2, monster_player2);
-
+        state = RoundState.Nothingness;
     }
 
-    public void Fight()
+    public void Fight(MiniGames m_game, float p1_value, float p2_value)
     {
-        //take monsters types
-        //audio_source.clip = UI_audio_clip;
-        //audio_source.Play();
-        MonsterTypes type_monster1 = monster_player1.GetComponent<Invoke_dragon>().type;
-        MonsterTypes type_monster2 = monster_player2.GetComponent<Invoke_dragon>().type;
-        GameObject winner = null;
-        switch(type_monster1)
+        switch (m_game)
         {
-            case MonsterTypes.Fire:
-                switch (type_monster2)
-                {
-                    case MonsterTypes.Water:
-                        winner = monster_player2;
-                        break;
-                    case MonsterTypes.Dark:
-                        winner = monster_player1;
-                        break;
-
-                }
+            case MiniGames.ChargeAttack:
+                PressMiniGame press1 = GameObject.Find("Button_MiniGame_P1").GetComponent<PressMiniGame>();
+                PressMiniGame press2 = GameObject.Find("Button_MiniGame_P2").GetComponent<PressMiniGame>();
+                press1.val = p1_value;
+                press2.val = p2_value;
                 break;
-            case MonsterTypes.Water:
-                switch (type_monster2)
-                {
-                    case MonsterTypes.Fire:
-                        winner = monster_player1;
-                        break;
-                    case MonsterTypes.Ground:
-                        winner = monster_player2;
-                        break;
-                }
-                break;
-            case MonsterTypes.Ground:
-                switch (type_monster2)
-                {
-                    case MonsterTypes.Water:
-                        winner = monster_player1;
-                        break;
-                    case MonsterTypes.Dark:
-                        winner = monster_player2;
-                        break;
-                }
-                break;
-            case MonsterTypes.Dark:
-                switch (type_monster2)
-                {
-                    case MonsterTypes.Fire:
-                        winner = monster_player2; 
-                        break;
-                    case MonsterTypes.Ground:
-                        winner = monster_player1;
-                        break;
-                }
+            case MiniGames.FastAttack:
                 break;
         }
-        if (winner == monster_player1)
-        {
-            player1.GetComponent<PointCounter>().WinRound();
-            monster_player1.GetComponent<Invoke_dragon>().SetMonsterWin(true);
-            monster_player2.GetComponent<Invoke_dragon>().SetMonsterWin(false);
-        }
-        else if (winner == monster_player2)
-        {
-            player2.GetComponent<PointCounter>().WinRound();
-            monster_player1.GetComponent<Invoke_dragon>().SetMonsterWin(false);
-            monster_player2.GetComponent<Invoke_dragon>().SetMonsterWin(true);
-        }
-        else
-        {
-            monster_player1.GetComponent<Invoke_dragon>().SetMonsterWin(false);
-            monster_player2.GetComponent<Invoke_dragon>().SetMonsterWin(false);
-        }
-        attack_state = AttackState.CalculateWinner;
-        
     }
 
     void NewRound()
@@ -300,7 +267,6 @@ public class Ready_to_fight : Monsters
         monster_player2.GetComponent<Invoke_dragon>().PassRound();
         monster_player1 = null;
         monster_player2 = null;
-        attack_state = AttackState.Selecting;
         TurnPlayer1();
     }
     void ChooseInvokeSound(AudioSource audio_src, GameObject monster)
@@ -405,8 +371,76 @@ public class Ready_to_fight : Monsters
 
     public void ManageAttacks()
     {
-        monster_player1.GetComponent<Invoke_dragon>().Attack();
-        monster_player2.GetComponent<Invoke_dragon>().Attack();
-        attack_state = AttackState.Fighting;
+        state = RoundState.Summoned;
+        //Random minigame
+        ActiveMiniGames();
+       
+    }
+
+    private void ActiveMiniGames()
+    {
+        switch (mini_games)
+        {
+            case MiniGames.ChargeAttack:
+                minipress_button_p1.gameObject.SetActive(true);
+                minipress_button_p2.gameObject.SetActive(true);
+                minibar_p1.gameObject.SetActive(true);
+                minibar_p2.gameObject.SetActive(true);
+                break;
+            case MiniGames.FastAttack:
+                break;
+        }
+        MonsterTypes type_monster1 = monster_player1.GetComponent<Invoke_dragon>().type;
+        MonsterTypes type_monster2 = monster_player2.GetComponent<Invoke_dragon>().type;
+        switch (type_monster1) //Managing the relations between types 
+        {
+            case MonsterTypes.Fire:
+                switch (type_monster2)
+                {
+                    case MonsterTypes.Water:
+                        Fight(mini_games, 2f, 4f);
+                        break;
+                    case MonsterTypes.Dark:
+                        Fight(mini_games, 4f, 2f);
+                        break;
+
+                }
+                break;
+            case MonsterTypes.Water:
+                switch (type_monster2)
+                {
+                    case MonsterTypes.Fire:
+                        Fight(mini_games, 4f, 2f);
+
+                        break;
+                    case MonsterTypes.Ground:
+                        Fight(mini_games, 2f, 4f);
+                        break;
+                }
+                break;
+            case MonsterTypes.Ground:
+                switch (type_monster2)
+                {
+                    case MonsterTypes.Water:
+                        Fight(mini_games, 4f, 2f);
+
+                        break;
+                    case MonsterTypes.Dark:
+                        Fight(mini_games, 2f, 4f);
+                        break;
+                }
+                break;
+            case MonsterTypes.Dark:
+                switch (type_monster2)
+                {
+                    case MonsterTypes.Fire:
+                        Fight(mini_games, 2f, 4f);
+                        break;
+                    case MonsterTypes.Ground:
+                        Fight(mini_games, 4f, 2f);
+                        break;
+                }
+                break;
+        }
     }
 }
