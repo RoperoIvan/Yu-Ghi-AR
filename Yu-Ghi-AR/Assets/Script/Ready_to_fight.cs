@@ -425,6 +425,8 @@ public class Ready_to_fight : Monsters
 
     public void ManageAttacks()
     {
+        audio_source.clip = UI_fight_audio_clip;
+        audio_source.Play();
         state = RoundState.Summoned;
 
         int num = UnityEngine.Random.Range(0, 2);
