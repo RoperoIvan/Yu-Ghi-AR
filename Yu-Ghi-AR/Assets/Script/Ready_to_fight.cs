@@ -148,7 +148,7 @@ public class Ready_to_fight : Monsters
                 {
                     monster_player1.GetComponent<Invoke_dragon>().Attack();
                     monster_player2.GetComponent<Invoke_dragon>().SetMonsterWin(false);
-                    Invoke("Roar", 1f);
+                    Invoke("Roar", 0.8f);
                     minipress_button_p1.GetComponent<PressMiniGame>().ResetBar();
                     minipress_button_p2.GetComponent<PressMiniGame>().ResetBar();
                     minipress_button_p1.gameObject.SetActive(false);
@@ -164,7 +164,7 @@ public class Ready_to_fight : Monsters
                 {
                     monster_player2.GetComponent<Invoke_dragon>().Attack();
                     monster_player1.GetComponent<Invoke_dragon>().SetMonsterWin(false);
-                    Invoke("Roar2", 1f);
+                    Invoke("Roar2", 0.8f);
                     minipress_button_p1.GetComponent<PressMiniGame>().ResetBar();
                     minipress_button_p2.GetComponent<PressMiniGame>().ResetBar();
                     minipress_button_p1.gameObject.SetActive(false);
@@ -182,7 +182,7 @@ public class Ready_to_fight : Monsters
                 {
                     monster_player1.GetComponent<Invoke_dragon>().Attack();
                     monster_player2.GetComponent<Invoke_dragon>().SetMonsterWin(false);
-                    Invoke("Roar", 1f);
+                    Invoke("Roar", 0.8f);
                     p1_pink_button.GetComponent<SpeedMiniGame>().ResetBar();
                     p2_pink_button.GetComponent<SpeedMiniGame>().ResetBar();
                     p1_blue_button.GetComponent<SpeedMiniGame>().ResetBar();
@@ -204,7 +204,7 @@ public class Ready_to_fight : Monsters
                 {
                     monster_player2.GetComponent<Invoke_dragon>().Attack();
                     monster_player1.GetComponent<Invoke_dragon>().SetMonsterWin(false);
-                    Invoke("Roar2", 1f);
+                    Invoke("Roar2", 0.8f);
                     p1_pink_button.GetComponent<SpeedMiniGame>().ResetBar();
                     p2_pink_button.GetComponent<SpeedMiniGame>().ResetBar();
                     p1_blue_button.GetComponent<SpeedMiniGame>().ResetBar();
