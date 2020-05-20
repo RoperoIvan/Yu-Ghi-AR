@@ -33,9 +33,12 @@ public class Ready_to_fight : Monsters
     public AudioClip dark_summon_clip;
     public AudioClip UI_audio_clip;
     public AudioClip UI_fight_audio_clip;
+    public AudioClip DragonRoar;
     AudioSource audio_source;
     AudioSource audio_source_p1;
     AudioSource audio_source_p2;
+    AudioSource audio_source_p1_roar;
+    AudioSource audio_source_p2_roar;
     GameObject monster_player1 = null;
     GameObject monster_player2 = null;
     GameObject winner = null;
@@ -54,6 +57,8 @@ public class Ready_to_fight : Monsters
         audio_source = GetComponent<AudioSource>();
         audio_source_p1 = player1.GetComponent<AudioSource>();
         audio_source_p2 = player2.GetComponent<AudioSource>();
+        audio_source_p1_roar = GameObject.Find("Roar").GetComponent<AudioSource>();
+        audio_source_p2_roar = GameObject.Find("Roar2").GetComponent<AudioSource>();
     }
     void Start()
     {
@@ -143,6 +148,7 @@ public class Ready_to_fight : Monsters
                 {
                     monster_player1.GetComponent<Invoke_dragon>().Attack();
                     monster_player2.GetComponent<Invoke_dragon>().SetMonsterWin(false);
+                    Invoke("Roar", 1f);
                     minipress_button_p1.GetComponent<PressMiniGame>().ResetBar();
                     minipress_button_p2.GetComponent<PressMiniGame>().ResetBar();
                     minipress_button_p1.gameObject.SetActive(false);
@@ -158,6 +164,7 @@ public class Ready_to_fight : Monsters
                 {
                     monster_player2.GetComponent<Invoke_dragon>().Attack();
                     monster_player1.GetComponent<Invoke_dragon>().SetMonsterWin(false);
+                    Invoke("Roar2", 1f);
                     minipress_button_p1.GetComponent<PressMiniGame>().ResetBar();
                     minipress_button_p2.GetComponent<PressMiniGame>().ResetBar();
                     minipress_button_p1.gameObject.SetActive(false);
@@ -175,6 +182,7 @@ public class Ready_to_fight : Monsters
                 {
                     monster_player1.GetComponent<Invoke_dragon>().Attack();
                     monster_player2.GetComponent<Invoke_dragon>().SetMonsterWin(false);
+                    Invoke("Roar", 1f);
                     p1_pink_button.GetComponent<SpeedMiniGame>().ResetBar();
                     p2_pink_button.GetComponent<SpeedMiniGame>().ResetBar();
                     p1_blue_button.GetComponent<SpeedMiniGame>().ResetBar();
@@ -196,6 +204,7 @@ public class Ready_to_fight : Monsters
                 {
                     monster_player2.GetComponent<Invoke_dragon>().Attack();
                     monster_player1.GetComponent<Invoke_dragon>().SetMonsterWin(false);
+                    Invoke("Roar2", 1f);
                     p1_pink_button.GetComponent<SpeedMiniGame>().ResetBar();
                     p2_pink_button.GetComponent<SpeedMiniGame>().ResetBar();
                     p1_blue_button.GetComponent<SpeedMiniGame>().ResetBar();
@@ -331,6 +340,7 @@ public class Ready_to_fight : Monsters
     void ChooseInvokeSound(AudioSource audio_src, GameObject monster)
     {
         MonsterTypes type_monster = monster.GetComponent<Invoke_dragon>().type;
+        Debug.Log(state);
         switch (state)
         {
             case RoundState.P1Selecting:
@@ -376,53 +386,38 @@ public class Ready_to_fight : Monsters
                         break;
                 }
                 break;
-
             case RoundState.PreSummoned:
                 switch (type_monster)
                 {
                     case MonsterTypes.Fire:
                         //SOUND
-
-                        break;
-                    case MonsterTypes.Water:
-                        //SOUND
-
-                        break;
-                    case MonsterTypes.Ground:
-                        //SOUND
-
-                        break;
-                    case MonsterTypes.Dark:
-                        //SOUND
-
-                        break;
-                }
-
-                break;
-            case RoundState.Summoned:
-                switch (type_monster)
-                {
-                    case MonsterTypes.Fire:
-                        //SOUND
                         audio_src.clip = fire_summon_clip;
+                        Debug.Log("FUEGO");
                         audio_src.Play();
                         break;
                     case MonsterTypes.Water:
                         //SOUND
                         audio_src.clip = water_summon_clip;
+                        Debug.Log("AGUA");
                         audio_src.Play();
                         break;
                     case MonsterTypes.Ground:
                         //SOUND
                         audio_src.clip = earth_summon_clip;
+                        Debug.Log("TIERRA");
                         audio_src.Play();
                         break;
                     case MonsterTypes.Dark:
                         //SOUND
                         audio_src.clip = dark_summon_clip;
+                        Debug.Log("OSCURIDAD");
                         audio_src.Play();
                         break;
                 }
+                if(string.Compare(monster.gameObject.transform.parent.name, "Player1") == 0)
+                    Invoke("Roar", 4f);
+                else
+                    Invoke("Roar2", 4f);
                 break;
         }
        
@@ -520,4 +515,16 @@ public class Ready_to_fight : Monsters
                 break;
         }
     }
+    void Roar()
+    {
+        audio_source_p1_roar.clip = DragonRoar;
+
+        audio_source_p1_roar.Play();
+    }
+    void Roar2()
+    {
+        audio_source_p2_roar.clip = DragonRoar;
+        audio_source_p2_roar.Play();
+    }
 }
+
